@@ -1,0 +1,48 @@
+# Core Django
+Django>=4.2.28
+asgiref>=3.7,<4
+sqlparse>=0.4.4
+tzdata>=2023.3
+
+# Django ecosystem
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+dj-rest-auth==7.0.1
+django-allauth==65.12.1
+django-cors-headers==4.9.0
+
+# Auth / Security
+cryptography>=42,<45
+PyJWT==2.10.1
+requests==2.32.3
+requests-oauthlib==2.0.0
+
+# Database
+psycopg2-binary==2.9.9
+dj-database-url==2.3.0
+
+# Async / Worker
+celery==5.4.0
+django-celery-beat==2.7.0
+redis==5.2.0
+
+# Server / Runtime
+gunicorn==23.0.0
+watchfiles~=0.21
+watchdog==6.0.0
+
+# Excel / Files
+openpyxl==3.1.2
+et-xmlfile==1.1.0
+pillow>=10.3.0
+
+# Utils
+python-dateutil==2.8.2
+pytz==2023.3.post1
+six==1.16.0
+
+# Dev / Test
+coverage==7.6.10
+unittest-xml-reporting==3.2.0
+ruff==0.14.14
+whitenoise==6.6.0
