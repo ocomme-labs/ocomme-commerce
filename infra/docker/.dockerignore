@@ -1,0 +1,38 @@
+# Source Control
+.git
+.gitignore
+.gitattributes
+
+# Python junk
+**/__pycache__/
+**/*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+
+# Secrets & Config
+.env
+.env.*
+local_settings.py
+db.sqlite3
+*.pem
+*.key
+
+# IDEs & OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Media & Static (Static sẽ được build lại trong Docker)
+staticfiles/
+media/
+
+# Docker & CI
+Dockerfile
+docker-compose.yml
+.dockerignore
+.github/
