@@ -10,6 +10,7 @@ djangorestframework-simplejwt==5.3.1
 dj-rest-auth==7.0.1
 django-allauth==65.12.1
 django-cors-headers==4.9.0
+django-tenants>=3.10.0
 
 # Auth / Security
 cryptography>=42,<45
@@ -20,6 +21,7 @@ requests-oauthlib==2.0.0
 # Database
 psycopg2-binary==2.9.9
 dj-database-url==2.3.0
+django-debug-toolbar==6.2.0
 
 # Async / Worker
 celery==5.4.0

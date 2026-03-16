@@ -1,7 +1,7 @@
 services:
   db:
     ports:
-      - "5432:5432"
+      - "5434:5432"
 
   redis:
     ports:
@@ -13,11 +13,15 @@ services:
       - ../../src/backend/ocomme:/app:cached
       - static_volume:/app/staticfiles
       - media_volume:/app/media
+    entrypoint: []
     ports:
       - "8000:8000"
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+    command: sleep infinity
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"    # Tăng lên 4 nhân hoặc hơn tùy máy bạn
+          memory: 4G
 
   celery:
     container_name: ocomme_dev_celery
