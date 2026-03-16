@@ -20,12 +20,21 @@ log() {
 
 check_db_connection() {
 python << END
-import socket,sys
+import psycopg2
+import sys
 try:
-    socket.create_connection(("$DB_HOST", int("$DB_PORT")), timeout=2)
-    sys.exit(0)
-except Exception:
+    psycopg2.connect(
+        dbname="${POSTGRES_DB}",
+        user="${POSTGRES_USER}",
+        password="${POSTGRES_PASSWORD}",
+        host="$DB_HOST",
+        port="$DB_PORT",
+        connect_timeout=2
+    )
+except Exception as e:
+    print(e)
     sys.exit(1)
+sys.exit(0)
 END
 }
 
@@ -67,16 +76,16 @@ collect_static() {
 }
 
 start_gunicorn() {
-
     log INFO "starting_gunicorn port=$PORT module=$APP_MODULE"
-
     exec gunicorn "$APP_MODULE" \
         --bind 0.0.0.0:$PORT \
         --workers ${GUNICORN_WORKERS:-3} \
         --threads ${GUNICORN_THREADS:-2} \
         --timeout ${GUNICORN_TIMEOUT:-60} \
         --access-logfile - \
-        --error-logfile -
+        --error-logfile - \
+        --preload \
+        --forwarded-allow-ips="*"
 }
 
 main() {

@@ -1,27 +1,40 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
   "name": "ocomme-backend-dev",
-
-  "dockerComposeFile": [
+  "dockerComposeFile":[
     "../infra/docker/docker-compose.yml",
     "../infra/docker/docker-compose.dev.yml"
   ],
   "service": "web",
-
   "workspaceFolder": "/app",
-
   "shutdownAction": "stopCompose",
-
   "customizations": {
     "vscode": {
-      "extensions": [
+      "settings": {
+        "python.analysis.exclude":[
+          "**/.venv",
+          "**/venv",
+          "**/env",
+          "**/__pycache__",
+          "**/node_modules"
+        ],
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "terminal.integrated.defaultProfile.linux": "bash",
+				"remote.otherPortsAttributes": {
+					"onAutoForward": "ignore"
+				},
+				"python.analysis.extraPaths": [
+					"/workspace/src/backend/ocomme"
+				]
+      },
+      "extensions":[
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-azuretools.vscode-docker",
         "ms-python.black-formatter",
-        "zhuangtongfa.material-theme",
-        "njpwerner.autodocstring"
+        "charliermarsh.ruff",
+        // "ms-python.mypy-type-checker",
+        "zhuangtongfa.material-theme"
+        // "njpwerner.autodocstring"
       ]
     }
   }

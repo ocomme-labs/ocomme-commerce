@@ -1,6 +1,6 @@
 [tool.ruff]
 line-length = 88
-target-version = "py312"
+target-version = "py312" # Cập nhật đúng bản Python bạn dùng
 
 exclude = [
     "migrations",
@@ -12,7 +12,9 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+# Thêm W (Warnings), B (Bugbear - bắt lỗi logic tiềm ẩn), UP (Upgrade)
+select = ["E", "F", "I", "W", "B", "UP"]
+ignore = []
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
@@ -25,9 +27,31 @@ indent-style = "space"
 line-ending = "auto"
 
 [tool.mypy]
+python_version = "3.12"
+# Bật chế độ nghiêm ngặt nhưng thực tế
+strict = true
+ignore_missing_imports = true
+allow_subclassing_any = true
+allow_untyped_calls = true
+pretty = true
+show_error_codes = true
+cache_dir = "/dev/null"  # Trên Linux/macOS: Đẩy cache vào "hố đen"
+# Hoặc đơn giản hơn là tắt hoàn toàn:
+cache_fine_grained = false
+incremental = false
+
 exclude = [
     'migrations/.*',
-    "venv",
-    "env",
-    ".venv",
+    'venv/.*',
+    'env/.*',
+    '\.venv/.*',
 ]
+
+# Đặc trị cho Django: Mypy thường báo lỗi ở các file không quan trọng
+[[tool.mypy.overrides]]
+module = "*.tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "manage"
+ignore_errors = true
