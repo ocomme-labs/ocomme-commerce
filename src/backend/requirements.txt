@@ -23,6 +23,9 @@ psycopg2-binary==2.9.9
 dj-database-url==2.3.0
 django-debug-toolbar==6.2.0
 
+# Cache
+django-redis>=5.4.0
+
 # Async / Worker
 celery==5.4.0
 django-celery-beat==2.7.0
@@ -37,6 +40,7 @@ watchdog==6.0.0
 openpyxl==3.1.2
 et-xmlfile==1.1.0
 pillow>=10.3.0
+django-phonenumber-field[phonenumbers]==8.4.0
 
 # Utils
 python-dateutil==2.8.2

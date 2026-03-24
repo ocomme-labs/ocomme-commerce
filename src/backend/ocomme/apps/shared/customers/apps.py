@@ -5,3 +5,7 @@ class CustomersConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.shared.customers"
     label = "customers"
+
+    def ready(self):
+        """"""
+        import apps.shared.customers.signals

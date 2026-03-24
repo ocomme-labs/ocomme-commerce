@@ -1,14 +1,16 @@
-from apps.shared.customers.models import Client
+from apps.shared.customers.models import Client, Merchant
 from apps.shared.customers.serializers import (
+    MerchantSerializer,
     ReadClientSerializer,
     WriteClientSerializer,
 )
-from apps.shared.customers.services import create_tenant_service
-from common.mixins import OcommeMixinApiView
+from apps.shared.customers.services import (
+    create_tenant_service,
+)
+from common.mixins import OcommeDetailMixinApiView, OcommeMixinApiView
 from rest_framework import permissions, serializers
 from rest_framework.views import Response
-
-# from dj_rest_auth.registration.views import SocialLoginView
+from django.urls import path
 
 MODIFY_METHOD = ["POST", "PUT", "PATCH"]
 
@@ -63,3 +65,44 @@ class ClientAPIView(OcommeMixinApiView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class MerchantDetailAPIView(OcommeDetailMixinApiView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = MerchantSerializer
+
+    def get_object(self):
+        email = self.request.user.email
+        merchant = Merchant.objects.get(email=email)
+        return merchant
+
+    def retrieve(self, request, *args, **kwargs):
+        data = self.get_object()
+        serializer = self.serializer_class(data)
+        return Response({"DATA": serializer.data}, status=200)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        return Response(
+            {
+                "MESSAGE": "SUCCESSFULLY",
+                "DATA": response.data,
+            },
+            status=200,
+        )
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+
+customers_api_urls = [
+    path("client/", ClientAPIView.as_view(), name="api-client"),
+    path(
+        "merchant-detail/",
+        MerchantDetailAPIView.as_view(),
+        name="api-merchant-detail-view",
+    ),
+]

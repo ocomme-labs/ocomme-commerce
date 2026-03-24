@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 import apps.shared.customers.api.identity as identity_urls
-import apps.shared.customers.urls as customer_urls
+import apps.shared.customers.api.views as customer_urls
 import common.api as common
 from dj_rest_auth.views import PasswordResetConfirmView
 from django.contrib import admin
@@ -37,7 +37,7 @@ urlpatterns = [
     path("auth/registration/", include("dj_rest_auth.registration.urls")),
     # Google OAuth TESTING
     path("accounts/", include("allauth.urls")),
-    path("accounts/login/google/", include(identity_urls.api_identity_urls)),
+    path("auth/identity/", include(identity_urls.identity_api_urls)),
     # ----- App Urls -----
     # Health checking
     path("health/", include(common.common_urls_pattern)),
@@ -45,7 +45,7 @@ urlpatterns = [
         "api/",
         include(
             [
-                path("", include(customer_urls)),
+                path("", include(customer_urls.customers_api_urls)),
             ]
         ),
     ),

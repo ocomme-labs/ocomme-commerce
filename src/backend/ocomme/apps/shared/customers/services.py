@@ -12,6 +12,7 @@ from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.text import slugify
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -68,3 +69,42 @@ def create_tenant_service(
         raise TenantCreationError(
             "An unexpected error occurred while creating your store."
         ) from e
+
+
+class MerchantServices:
+
+    @staticmethod
+    def update_merchant_detail_service(email, extra_data):
+        try:
+            merchant, _ = Merchant.objects.get_or_create(email=email)
+
+            if not merchant.name:
+                merchant.name = extra_data.get("name")
+
+            if not merchant.picture_url:
+                merchant.picture_url = extra_data.get("picture")
+
+            if merchant.name:
+                merchant.is_profile_completed = True
+
+            merchant.save(
+                update_fields=[
+                    "name",
+                    "picture_url",
+                    "is_profile_completed",
+                ]
+            )
+
+            return merchant
+
+        except Merchant.DoesNotExist as e:
+            logger.error("Merchant does not exists")
+            raise UserDoesNotExistError(
+                f"User with email {email} does not exist!"
+            ) from e
+
+        except Exception as e:
+            logger.error(f"Unexpected error during tenant creation: {e}")
+            raise TenantCreationError(
+                "An unexpected error occurred while creating your store."
+            ) from e
