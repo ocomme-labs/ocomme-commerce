@@ -14,7 +14,7 @@ class OcommeMixinApiView(
     """"""
 
 
-class OcommeMixinInstanceApiView(
+class OcommeDetailMixinApiView(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,

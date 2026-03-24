@@ -7,9 +7,12 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django_tenants.models import DomainMixin, TenantMixin
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Client(TenantMixin, BaseModel):
+    """Provided Tenant models"""
+
     name = models.CharField(max_length=100)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -67,9 +70,19 @@ class CustomUserManager(BaseUserManager):
 class Merchant(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     email = models.EmailField(unique=True)
+    name = models.CharField(max_length=208, blank=True, null=True)
+    picture_url = models.CharField(max_length=500, blank=True, null=True)
+    phone = PhoneNumberField(blank=True, null=True)
+    # address = models.ForeinKey(Address, blank=True, null=True)  # TODO: Update Address models
+    is_profile_completed = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    is_locked = models.BooleanField(default=False)
+    locked_until = models.DateTimeField(null=True, blank=True)
+    failed_login_attempts = models.IntegerField(default=0)
+    last_failed_login = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: list[str] = []

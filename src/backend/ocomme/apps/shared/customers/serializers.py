@@ -1,7 +1,50 @@
-from apps.shared.customers.models import Client
+from apps.shared.customers.models import Client, Merchant
 from common.models import PlanTypeEnum
 from django.utils.text import slugify
 from rest_framework import serializers
+from dj_rest_auth.serializers import LoginSerializer
+from django.utils import timezone
+
+
+class CustomLoginSerializer(LoginSerializer):
+
+    def get_auth_user(self, username, email, password):
+        now = timezone.now()
+        try:
+            merchant = Merchant.objects.get(email=email)
+        except Merchant.DoesNotExist:
+            raise serializers.ValidationError({"ERROR": "Invalid credentials"})
+
+        if merchant.is_locked and merchant.locked_until and merchant.locked_until < now:
+            merchant.is_locked = False
+            merchant.locked_until = None
+            merchant.save(update_fields=["is_locked", "locked_until"])
+
+        if not merchant.is_active:
+            raise serializers.ValidationError(
+                {
+                    "error_code": "ACCOUNT_DISABLED",
+                    "detail": {
+                        "title": "Account Permanently Locked",
+                        "message": "Your account has been disabled due to multiple security violations. Please contact the System Administrator for assistance.",
+                        "contact_support": "admin@yourdomain.com",
+                    },
+                }
+            )
+
+        if merchant.is_locked:
+            raise serializers.ValidationError(
+                {
+                    "error_code": "ACCOUNT_TEMPORARILY_LOCKED",
+                    "detail": {
+                        "title": "Account is locked",
+                        "message": f"Too many failed attempts. Please try again after {merchant.locked_until}.",
+                        "locked_until": merchant.locked_until,
+                    },
+                }
+            )
+
+        return super().get_auth_user(username, email, password)
 
 
 class ReadClientSerializer(serializers.ModelSerializer):
@@ -36,3 +79,17 @@ class WriteClientSerializer(serializers.Serializer):
                 }
             )
         return attrs
+
+
+class MerchantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Merchant
+        fields = [
+            "id",
+            "email",
+            "name",
+            "phone",
+            "picture_url",
+            "is_profile_completed",
+            "is_locked",
+        ]

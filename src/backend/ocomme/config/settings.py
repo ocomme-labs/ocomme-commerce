@@ -57,8 +57,10 @@ SHARED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    # Others
     "corsheaders",
     "django_celery_beat",
+    "phonenumber_field",
 ]
 
 TENANT_APPS = [
@@ -97,13 +99,21 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "DEFAULT_THROTTLE_CLASSES": [],
+    "DEFAULT_THROTTLE_RATES": {
+        "login_attempts": "5/min",
+    },
 }
 
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": True,
+    "LOGIN_SERIALIZER": "apps.shared.customers.serializers.CustomLoginSerializer",
 }
 DJ_REST_AUTH = {"TOKEN_MODEL": None}
+SOCIALACCOUNT_ADAPTER = (
+    "apps.shared.customers.adapters.CustomDefaultSocialAccountAdapter"
+)
 REST_AUTH_TOKEN_MODEL = None
 
 ROOT_URLCONF = "config.urls_public"
@@ -138,6 +148,17 @@ DATABASES: dict[str, dict[str, str]] = {
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
         "HOST": os.getenv("DB_HOST", "localhost"),
         "PORT": os.getenv("DB_PORT", "5432"),
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
+        },
     }
 }
 
